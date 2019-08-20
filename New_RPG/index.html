@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Untitled RPG</title>
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
+    <meta name="description" content="Simple RPG Game">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="RPGStyles.css"/>
+</head>
+
+<body>
+    <script>
+        var BootScene = new Phaser.Class({
+
+            Extends: Phaser.Scene,
+
+            initialize:
+
+                function BootScene() {
+                    Phaser.Scene.call(this, {
+                        key: 'BootScene'
+                    });
+                },
+
+            preload: function () {
+                this.load.image("tiles", "assets/map/spritesheet.png");
+                this.load.tilemapTiledJSON("map", "assets/map/map.json");
+                this.load.spritesheet("player", "assets/RPG_assets.png", {frameWidth: 16, frameHeight: 16});
+            },
+
+            create: function () {
+                this.scene.start('WorldScene');
+            }
+        });
+
+        var WorldScene = new Phaser.Class({
+
+            Extends: Phaser.Scene,
+
+            initialize:
+
+                function WorldScene() {
+                    Phaser.Scene.call(this, {
+                        key: 'WorldScene'
+                    });
+                },
+            preload: function () {
+
+            },
+            create: function () {
+                // sets the map tiles and sets the tiles boundaries
+                var map = this.make.tilemap({key:"map"});
+                var tiles = map.addTilesetImage("spritesheet", "tiles");
+                var grass = map.createStaticLayer("Grass", tiles, 0,0);
+                var obstacles = map.createStaticLayer("Obstacles", tiles, 0,0);
+                obstacles.setCollisionByExclusion([-1]);
+                // Adds player sprite and physics plus sets a collision to the map.
+                this.player = this.physics.add.sprite(50,100,"player", 6);
+                this.physics.world.bounds.width = map.widthInPixels;
+                this.physics.world.bounds.height = map.heightInPixels;
+                this.player.setCollideWorldBounds(true);
+                // for player movement
+                this.cursors = this.input.keyboard.createCursorKeys();
+                // for camera to follow player
+                this.cameras.main.setBounds(0,0, map.widthInPixels, map.heightInPixels);
+                this.cameras.main.startFollow(this.player);
+                this.cameras.main.roundPixels = true;
+                // animations
+                this.anims.create({
+                    key: "left",
+                    frames: this.anims.generateFrameNumbers("player", {frames: [1, 7, 1, 13]}),
+                    frameRate: 10,
+                    repeat: -1
+                });
+                this.anims.create({
+                    key: "right",
+                    frames: this.anims.generateFrameNumbers("player", {frames: [1, 7, 1, 13]}),
+                    frameRate: 10,
+                    repeat: -1
+                });
+                this.anims.create({
+                    key: "up",
+                    frames: this.anims.generateFrameNumbers("player", {frames: [2, 8, 2, 14]}),
+                    frameRate: 10, 
+                    repeat: -1
+                });
+                this.anims.create({
+                    key: "down",
+                    frames: this.anims.generateFrameNumbers("player", {frames: [0, 6, 0, 12]}),
+                    frameRate: 10, 
+                    repeat: -1
+                });
+                // hit obstacles 
+                this.physics.add.collider(this.player, obstacles);
+            },
+
+            update: function(time, delta) {
+                this.player.setVelocity(0);
+                // left and right movement
+                this.cursors.left.isDown ? this.player.body.setVelocityX(-80) 
+                : this.cursors.right.isDown ? this.player.body.setVelocityX(80): null;
+                // up and down movement
+                this.cursors.up.isDown ? this.player.body.setVelocityY(-80)
+                : this.cursors.down.isDown ? this.player.body.setVelocityY(80) : null;
+                // Update Animations
+                this.cursors.left.isDown ? this.player.anims.play("left", true)
+                : this.cursors.right.isDown ? this.player.anims.play("right", true) 
+                : this.cursors.up.isDown ? this.player.anims.play("up", true) 
+                : this.cursors.down.isDown ? this.player.anims.play("down", true) 
+                : this.player.anims.stop();
+            }
+
+        });
+
+        var config = {
+            type: Phaser.AUTO,
+            parent: 'content',
+            width: 320,
+            height: 240,
+            zoom: 2,
+            pixelArt: true,
+            physics: {
+                default: 'arcade',
+                arcade: {
+                    gravity: {
+                        y: 0
+                    }
+                }
+            },
+            scene: [
+                BootScene,
+                WorldScene
+            ]
+        };
+        var game = new Phaser.Game(config);
+    </script>
+</body>
+
+</html>
