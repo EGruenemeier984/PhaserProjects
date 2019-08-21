@@ -1,5 +1,7 @@
 body {
     margin: 0;
+    background-color: rgb(189, 192, 190);
+    font-family: 'Orbitron', sans-serif;
 }
 
 canvas {
