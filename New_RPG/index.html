@@ -82,6 +82,9 @@
 
                 // Run UI Scene at the same time
                 this.scene.launch('UIScene');
+                
+                // current active units in array
+                this.index = -1;
             }
 
         });
@@ -118,8 +121,33 @@
                 this.menus.add(this.actionMenu);
                 this.menus.add(this.enemiesMenu);
                 this.battleScene = this.scene.get("BattleScene");
-            
+                this.remapHeroes();
+                this.remapEnemies();
+                this.input.keyboard.on("keydown", this.onKeyInput, this);
+            },
 
+            onKeyInput: function () {
+                if (this.currentMenu) {
+                    if (event.code === "ArrowUp") {
+                        this.currentMenu.moveSelectionUp();
+                    } else if (event.code === "ArrowDown") {
+                        this.currentMenu.moveSelectionDown();
+                    } else if (event.code === "ArrowRight" || event.code === "Shift") {
+
+                    } else if (event.code === "Space" || event.code === "ArrowLeft") {
+                        this.currentMenu.confirm();
+                    }
+                }
+            },
+
+            remapHeroes: function () {
+                var heroes = this.battleScene.heroes;
+                this.heroesMenu.remap(heroes);
+            },
+
+            remapEnemies: function () {
+                var enemies = this.battleScene.enemies;
+                this.enemiesMenu.remap(enemies);
             }
         });
 
@@ -346,16 +374,16 @@
             },
 
             clear: function () {
-                for(var i =0; i < this.menuItems.length; i++){
+                for (var i = 0; i < this.menuItems.length; i++) {
                     this.menuItems[i].destroy();
-                } 
+                }
                 this.menuItems.length = 0;
                 this.menuItemIndex = 0;
             },
 
             remap: function (units) {
                 this.clear();
-                for(var i = 0; i < units.length; i++){
+                for (var i = 0; i < units.length; i++) {
                     var unit = units[i];
                     this.addMenuItem(unit.type);
                 }
@@ -364,25 +392,25 @@
         });
 
         var HeroesMenu = new Phaser.Class({
-            Extends: Menu, 
-
-            initialize: 
-
-            function HeroesMenu(x, y, scene) {
-                Menu.call(this, x, y, scene);
-            }
-        });
-
-        var ActionMenu = new Phaser.Class({
-            Extends: Menu, 
+            Extends: Menu,
 
             initialize:
 
-            function ActionsMenu(x, y, scene) {
-                Menu.call(this, x, y, scene);
-                this.addMenuItem("Attack");
-            },
-            confirm: function() {
+                function HeroesMenu(x, y, scene) {
+                    Menu.call(this, x, y, scene);
+                }
+        });
+
+        var ActionMenu = new Phaser.Class({
+            Extends: Menu,
+
+            initialize:
+
+                function ActionsMenu(x, y, scene) {
+                    Menu.call(this, x, y, scene);
+                    this.addMenuItem("Attack");
+                },
+            confirm: function () {
                 // action 
             }
         });
@@ -392,10 +420,10 @@
 
             initialize:
 
-            function EnemiesMenu(x, y, scene) {
-                Menu.call(this, x, y, scene);
-            },
-            confirm: function() {
+                function EnemiesMenu(x, y, scene) {
+                    Menu.call(this, x, y, scene);
+                },
+            confirm: function () {
                 // action
             }
         })
