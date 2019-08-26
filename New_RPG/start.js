@@ -15,6 +15,7 @@ var config = {
         }
     },
     scene: [
+        //TitleScene,
         BootScene,
         WorldScene,
         BattleScene,

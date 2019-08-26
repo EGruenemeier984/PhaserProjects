@@ -25,10 +25,10 @@ var BattleScene = new Phaser.Class({
         var mage = new PlayerCharacter(this, 250, 100, 'player', 4, 'Mage', 80, 10);
         this.add.existing(mage);
 
-        var dragonblue = new Enemy(this, 50, 50, 'dragonblue', null, 'Dragon', 50, 20);
+        var dragonblue = new Enemy(this, 50, 50, 'dragonblue', null, 'EXPO', 50, 20);
         this.add.existing(dragonblue);
 
-        var dragonOrange = new Enemy(this, 50, 100, 'dragonorrange', null, 'OP Dragon', 500, 100);
+        var dragonOrange = new Enemy(this, 50, 100, 'dragonorrange', null, 'MICKAl', 50, 20);
         this.add.existing(dragonOrange);
 
         // array with heroes
