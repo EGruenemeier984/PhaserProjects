@@ -1,20 +1,21 @@
-var TitleScene = new Phaser.Class({
+var TitleScene = new Phaser.Class ({
     Extends: Phaser.Scene,
 
-    initialize: 
+constructor () {
+    super('Title');
+  },
+ 
+  preload () {
+    this.load.image("dragon", "assets/dragonblue.png");
+    this.load.image('box', 'assets/ui/grey_box.png');
+    this.load.image('checkedBox', 'assets/ui/blue_boxCheckmark.png');
+  },
+ 
+  create () {
+    this.gameButton = this.add.sprite(100, 200, "blueButton1").setInteractive();
+    this.centerButton(this.gameButton, 1);
 
-    function TitleScene() {
-        Phaser.Scene.call(this,{
-            key: 'TitleScene'
-        });
-    },
-
-    preload: function () {
-        this.load.image("Dragon", "assets/dragonblue.png");
-        this.setBackgroundColor("green");
-    },
-
-    create: function () {
-        model.state = "title";
-    }
+    this.gameText = this.add.text(0,0, "Play!", { fontSize: "32px", fill: "#fff" });
+    this.centerButtonText(this.gameText, this.gameButton);
+  }
 });
