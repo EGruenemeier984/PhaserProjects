@@ -1,3 +1,5 @@
+// import { BattleScene } from "battle.js";
+
 var BootScene = new Phaser.Class({
 
     Extends: Phaser.Scene,
@@ -50,7 +52,7 @@ var WorldScene = new Phaser.Class({
         var obstacles = map.createStaticLayer("Obstacles", tiles, 0, 0);
         obstacles.setCollisionByExclusion([-1]);
 
-        // animations
+        // animations for player walking
         this.anims.create({
             key: "left",
             frames: this.anims.generateFrameNumbers("player", {
