@@ -18,17 +18,17 @@ var BattleScene = new Phaser.Class({
 
     startBattle: function () {
         // player character - warrior
-        var warrior = new PlayerCharacter(this, 250, 50, 'player', 1, 'Warrior', 100, 50, 3);
+        var warrior = new PlayerCharacter(this, 250, 50, 'player', 1, 'Warrior', 100, 10, 3);
         this.add.existing(warrior);
 
         // player character - mage
-        var mage = new PlayerCharacter(this, 250, 100, 'player', 4, 'Mage', 80, 50, 0);
+        var mage = new PlayerCharacter(this, 250, 100, 'player', 4, 'Mage', 80, 10, 3);
         this.add.existing(mage);
 
-        var dragonblue = new Enemy(this, 50, 50, 'dragonblue', null, 'EXPO', 50, 20);
+        var dragonblue = new Enemy(this, 50, 50, 'dragonblue', null, 'EXPO', 50, 50);
         this.add.existing(dragonblue);
 
-        var dragonOrange = new Enemy(this, 50, 100, 'dragonorrange', null, 'MICKAl', 50, 20);
+        var dragonOrange = new Enemy(this, 50, 100, 'dragonorrange', null, 'MICKAl', 50, 50);
         this.add.existing(dragonOrange);
 
         // array with heroes
@@ -79,7 +79,6 @@ var BattleScene = new Phaser.Class({
     },
     // check for game over or victory
     checkEndBattle: function () {
-        var lives = 3; 
         var victory = true;
         var gameOver = true;
         // if all enemies are dead we have victory
@@ -92,10 +91,7 @@ var BattleScene = new Phaser.Class({
             if (this.heroes[i].living)
                 gameOver = false;
         }
-        if (victory == false && gameOver == true){
-            lives -= 1;
-            console.log(lives);
-        }
+        
         return victory || gameOver;
     },
 
@@ -128,16 +124,15 @@ var BattleScene = new Phaser.Class({
 var Unit = new Phaser.Class({
     Extends: Phaser.GameObjects.Sprite,
 
-    initialize:
-
-        function Unit(scene, x, y, texture, frame, type, hp, damage, startLives) {
+    initialize: 
+        function Unit(scene, x, y, texture, frame, type, hp, damage, playerLives) {
             Phaser.GameObjects.Sprite.call(this, scene, x, y, texture, frame)
             this.type = type;
-            this.startLives = startLives;
             this.maxHp = this.hp = hp;
             this.damage = damage; // default damage
             this.living = true;
             this.menuItem = null;
+            this.lives = playerLives;
         },
     setMenuItem: function (item) {
         this.menuItem = item;
@@ -149,6 +144,14 @@ var Unit = new Phaser.Class({
             this.scene.events.emit("Message", `${this.type} attacks ${target.type} for ${this.damage} damage`);
         }
     },
+
+    takeLives: function () {
+        if (this.living === false){
+            this.lives -= 1;
+            console.log(this.lives);
+        }
+    },
+
     takeDamage: function (damage) {
         this.hp -= damage;
         if (this.hp <= 0) {
@@ -157,7 +160,8 @@ var Unit = new Phaser.Class({
             this.living = false;
             this.visible = false;
             this.menuItem = null;
-        }
+            this.takeLives();
+        } 
     }
 });
  
@@ -183,15 +187,15 @@ var Enemy = new Phaser.Class({
 var PlayerCharacter = new Phaser.Class({
     Extends: Unit,
 
-    initialize: function PlayerCharacter(scene, x, y, texture, frame, type, hp, damage, startLives) {
-        Unit.call(this, scene, x, y, texture, frame, type, hp, damage, startLives);
-        // console.log(startLives);
+    initialize: function PlayerCharacter(scene, x, y, texture, frame, type, hp, damage, playerLives) {
+        Unit.call(this, scene, x, y, texture, frame, type, hp, damage, playerLives);
         // flip the image so characters show up correctly in battle
         this.flipX = true;
 
         this.setScale(2);
     }
 });
+
 
 var MenuItem = new Phaser.Class({
     Extends: Phaser.GameObjects.Text,
