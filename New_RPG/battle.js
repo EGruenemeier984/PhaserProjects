@@ -18,17 +18,17 @@ var BattleScene = new Phaser.Class({
 
     startBattle: function () {
         // player character - warrior
-        var warrior = new PlayerCharacter(this, 250, 50, 'player', 1, 'Warrior', 100, 10, 3);
+        var warrior = new PlayerCharacter(this, 250, 50, 'player', 1, 'Warrior', 100, 50, 1);
         this.add.existing(warrior);
 
         // player character - mage
-        var mage = new PlayerCharacter(this, 250, 100, 'player', 4, 'Mage', 80, 10, 3);
+        var mage = new PlayerCharacter(this, 250, 100, 'player', 4, 'Mage', 80, 25, 1);
         this.add.existing(mage);
 
-        var dragonblue = new Enemy(this, 50, 50, 'dragonblue', null, 'EXPO', 50, 50);
+        var dragonblue = new Enemy(this, 50, 50, 'dragonblue', null, 'EXPO', 100, 50, 1);
         this.add.existing(dragonblue);
 
-        var dragonOrange = new Enemy(this, 50, 100, 'dragonorrange', null, 'MICKAl', 50, 50);
+        var dragonOrange = new Enemy(this, 50, 100, 'dragonorrange', null, 'MICKAl', 100, 75, 1);
         this.add.existing(dragonOrange);
 
         // array with heroes
@@ -91,8 +91,24 @@ var BattleScene = new Phaser.Class({
             if (this.heroes[i].living)
                 gameOver = false;
         }
+
+        if(gameOver === true) {
+            this.takeLives();
+        }
         
         return victory || gameOver;
+    },
+
+    takeLives: function () {
+        this.playerLives -= 1;
+        console.log(this.playerLives);
+        for(var i = 0; i < this.heroes.length; i++){
+            if (this.heroes[i].living && this.playerLives <= 0) {
+                this.playerLives = 0;
+                console.log("Game Over");
+            } 
+        }
+       
     },
 
     receivePlayerSelection: function (action, target) {
@@ -132,7 +148,7 @@ var Unit = new Phaser.Class({
             this.damage = damage; // default damage
             this.living = true;
             this.menuItem = null;
-            this.lives = playerLives;
+            this.lives = this.playerLives = playerLives;
         },
     setMenuItem: function (item) {
         this.menuItem = item;
@@ -145,13 +161,6 @@ var Unit = new Phaser.Class({
         }
     },
 
-    takeLives: function () {
-        if (this.living === false){
-            this.lives -= 1;
-            console.log(this.lives);
-        }
-    },
-
     takeDamage: function (damage) {
         this.hp -= damage;
         if (this.hp <= 0) {
@@ -160,21 +169,9 @@ var Unit = new Phaser.Class({
             this.living = false;
             this.visible = false;
             this.menuItem = null;
-            this.takeLives();
         } 
     }
 });
- 
-// var Lives = new Phaser.Class({
-//     Extends: Unit,
-
-//     initialize: function checkLife(startLives){
-//         this.startLives = 3;
-//         if (this.victory === false){
-//             this.startLives -= 1;
-//         } 
-//     },
-// })
 
 var Enemy = new Phaser.Class({
     Extends: Unit,
