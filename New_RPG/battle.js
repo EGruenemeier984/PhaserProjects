@@ -10,10 +10,13 @@ var BattleScene = new Phaser.Class({
             });
         },
     create: function () {
-        // change the background to green
-        this.cameras.main.setBackgroundColor('rgba(0, 200, 0, 0.5)');
+        this.cameras.main.setBackgroundColor('#CC001B');
         this.startBattle()
         this.sys.events.on("wake", this.startBattle, this);
+    },
+
+    preload: function(){
+        this.load.image('button', 'assets/ui/blue_button03.png');
     },
 
     startBattle: function () {
@@ -25,10 +28,10 @@ var BattleScene = new Phaser.Class({
         var mage = new PlayerCharacter(this, 250, 100, 'player', 4, 'Mage', 80, 25, 1);
         this.add.existing(mage);
 
-        var dragonblue = new Enemy(this, 50, 50, 'dragonblue', null, 'EXPO', 100, 50, 1);
+        var dragonblue = new Enemy(this, 50, 50, 'dragonblue', null, 'Mr. McMurdy', 100, 50, 1);
         this.add.existing(dragonblue);
 
-        var dragonOrange = new Enemy(this, 50, 100, 'dragonorrange', null, 'MICKAl', 100, 75, 1);
+        var dragonOrange = new Enemy(this, 50, 100, 'dragonorrange', null, 'Mr. Peck', 100, 75, 1);
         this.add.existing(dragonOrange);
 
         // array with heroes
@@ -92,23 +95,15 @@ var BattleScene = new Phaser.Class({
                 gameOver = false;
         }
 
-        if(gameOver === true) {
-            this.takeLives();
+        if(gameOver === true){
+            this.add.text(100,100, "GAME OVER!!", { fontFamily: "'Orbitron', sans-serif"});
+            const button = this.add.text(125, 120, "Restart").setInteractive();
+            button.on('pointerdown', function (){
+                this.scene.start(WorldScene);
+            });
+            
         }
-        
         return victory || gameOver;
-    },
-
-    takeLives: function () {
-        this.playerLives -= 1;
-        console.log(this.playerLives);
-        for(var i = 0; i < this.heroes.length; i++){
-            if (this.heroes[i].living && this.playerLives <= 0) {
-                this.playerLives = 0;
-                console.log("Game Over");
-            } 
-        }
-       
     },
 
     receivePlayerSelection: function (action, target) {
@@ -132,8 +127,7 @@ var BattleScene = new Phaser.Class({
         this.units.length = 0;
         // sleep the UI
         this.scene.sleep('UIScene');
-        // return to WorldScene and sleep current BattleScene
-        this.scene.switch('WorldScene');
+        
     }
 });
 
@@ -203,7 +197,7 @@ var MenuItem = new Phaser.Class({
             Phaser.GameObjects.Text.call(this, scene, x, y, text, {
                 color: '#ffffff',
                 align: 'left',
-                fontSize: 15
+                fontSize: 12
             });
         },
 
@@ -321,7 +315,8 @@ var ActionsMenu = new Phaser.Class({
 
         function ActionsMenu(x, y, scene) {
             Menu.call(this, x, y, scene);
-            this.addMenuItem("Attack");
+            this.addMenuItem("Slash");
+            this.addMenuItem("Punch");
         },
     confirm: function () {
         this.scene.events.emit("SelectedAction");
@@ -385,12 +380,6 @@ var UIScene = new Phaser.Class({
 
         this.createMenu();
 
-        /*
-        old: doesn't matter in this version
-        this.remapHeroes();
-        this.remapEnemies();
-        this.battleScene.nextTurn();
-        */
     },
 
     createMenu: function () {
@@ -459,7 +448,7 @@ var Message = new Phaser.Class({
             this.text = new Phaser.GameObjects.Text(scene, 0, 0, "", {
                 color: '#ffffff',
                 align: 'center',
-                fontSize: 13,
+                fontSize: 10,
                 wordWrap: {
                     width: 160,
                     useAdvancedWrap: true

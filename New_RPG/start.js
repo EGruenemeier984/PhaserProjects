@@ -19,7 +19,7 @@ var config = {
         BootScene,
         WorldScene,
         BattleScene,
-        UIScene
+        UIScene,
     ]
 };
 var game = new Phaser.Game(config);

@@ -1,5 +1,3 @@
-// import { BattleScene } from "battle.js";
-
 var BootScene = new Phaser.Class({
 
     Extends: Phaser.Scene,
